@@ -1,0 +1,35 @@
+name: Command dispatcher
+on:
+  issue_comment: # applies to PR and issue comments
+    types: [created, edited]
+
+jobs:
+  command_dispatch:
+    name: Dispatch slash commands
+    runs-on: ubuntu-latest
+    permissions:
+      # keep this limited to read permissions for the content only!
+      contents: write
+    steps:
+      - name: Dispatch
+        id: dispatch
+        uses: peter-evans/slash-command-dispatch@v4
+        with:
+          token: ${{ github.token }}
+          allow-edits: true
+          commands: |
+            deploy
+  
+      - name: Debug
+        run: |
+          echo "${{ github.event.comment.body }}"
+
+      - name: Indicate dispatch failure
+        if: ${{ steps.dispatch.outcome == 'failure' }}
+        run: |
+          echo ${{ steps.dispatch.outputs.error-message }}
+
+      - name: Indicate successful dispatch
+        if: ${{ steps.dispatch.outcome == 'success' }}
+        run: |
+          echo OK
