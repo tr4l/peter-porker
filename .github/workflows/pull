@@ -1,0 +1,12 @@
+name: Hello world
+on:
+  pull_request:
+jobs:
+  hello:
+    name: tata
+    runs-on: ubuntu-latest
+    steps:
+  
+      - name: Debug
+        run: |
+          echo "Runned"
